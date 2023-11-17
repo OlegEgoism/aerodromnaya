@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать заявку{% endblock %}
+
+{% block content %}
+    <div class="circular-container">
+        <h1>Создать заявку</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ feedback_job_create_form.as_p }}
+            </div>
+            {{ photo_formset.management_form }}
+            <div class="form-group">
+                {% for form in photo_formset %}
+                    {{ form.as_p }}
+                {% endfor %}
+            </div>
+            <button type="submit">Отправить</button>
+        </form>
+    </div>
+{% endblock %}

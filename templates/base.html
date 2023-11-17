@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+<body>
+<header>
+    <h1>Товарищество собственников жилого дома Диадема</h1>
+    <p class="address">г. Минск, ул. Аэродромная, 32</p>
+    <nav>
+        <ul>
+            <li><a href="{% url 'info' %}">Главная</a></li>
+            <li><a href="{% url 'feedback_job_create' %}">Создать заявку</a></li>
+            <li><a href="{% url 'feedback_jobs_status_in_work' %}">Заявки в работе ({{ total_in_work }} шт.)</a></li>
+            <li><a href="{% url 'feedback_jobs_status_completed' %}">Заявки выполненные ({{ total_completed }} шт.)</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

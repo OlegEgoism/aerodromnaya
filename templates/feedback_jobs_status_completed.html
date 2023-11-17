@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Заявки выполненные{% endblock %}
+
+{% block content %}
+    <div class="circular-container">
+        <h1>Заявки выполненные ({{ total_completed }} шт.)</h1>
+        <ul>
+            {% for feedback_job in status_completed %}
+                <li>
+                    <p>ФИО: {{ feedback_job.last_name }} {{ feedback_job.first_name }} {{ feedback_job.middle_name }}</p>
+                    <p>Квартира: {{ feedback_job.apartment }}</p>
+                    <p>Сообщение: {{ feedback_job.message }}</p>
+                    <p>Дата заявки: {{ feedback_job.datetime_start }}</p>
+                    <p>Дата закрытия заявки:
+                        {% if feedback_job.datetime_end %}
+                            {{ feedback_job.datetime_end }}
+                        {% else %}
+                            Дата не установлена
+                        {% endif %}
+                    </p>
+                    <p>Ответ от председателя:
+                        {% if feedback_job.message_comment %}
+                            {{ feedback_job.message_comment }}
+                        {% else %}
+                            Нет комментария
+                        {% endif %}
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+
+        <div class="pagination">
+        <span class="step-links">
+            {% if status_completed.has_previous %}
+                <a href="?page=1">&laquo; первая</a>
+                <a href="?page={{ status_completed.previous_page_number }}">предыдущая</a>
+            {% endif %}
+
+            <span class="current">
+                Страница {{ status_completed.number }} из {{ status_completed.paginator.num_pages }}.
+            </span>
+
+            {% if status_completed.has_next %}
+                <a href="?page={{ status_completed.next_page_number }}">следующая</a>
+                <a href="?page={{ status_completed.paginator.num_pages }}">последняя &raquo;</a>
+            {% endif %}
+        </span>
+        </div>
+    </div>
+{% endblock %}
