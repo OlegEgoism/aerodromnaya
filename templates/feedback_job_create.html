@@ -15,10 +15,18 @@
             {{ photo_formset.management_form }}
             <div class="form-group">
                 {% for form in photo_formset %}
-                    {{ form }}
+                    <div class="formset-form">
+                        {{ form.photo }}
+                    </div>
                 {% endfor %}
             </div>
             <button type="submit">Отправить</button>
         </form>
     </div>
+    <style>
+        /* Скрыть текст и чекбокс в форме photo_formset */
+        .formset-form label, .formset-form input[type="checkbox"] {
+            display: none;
+        }
+    </style>
 {% endblock %}

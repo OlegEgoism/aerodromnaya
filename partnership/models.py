@@ -80,3 +80,6 @@ class Photo(models.Model):
     class Meta:
         verbose_name = 'Фотография'
         verbose_name_plural = 'Фотография'
+
+    def __str__(self):
+        return f'{self.id} - {self.feedback_job.id}'
