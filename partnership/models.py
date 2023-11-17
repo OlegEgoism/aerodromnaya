@@ -53,7 +53,7 @@ class FeedbackJob(models.Model):
         ordering = '-datetime_start',
 
     def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.middle_name}'
+        return f'{self.last_name} {self.first_name} {self.middle_name} {self.phone}'
 
     def save(self, *args, **kwargs):
         if self.status == 'Выполнен' and not self.datetime_end:

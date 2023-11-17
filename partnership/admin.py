@@ -30,6 +30,7 @@ class PhotoInline(admin.TabularInline):
     def has_delete_permission(self, request, obj=None):
         return False  # Запрещаем удаление существующих объектов
 
+
 @admin.register(InfoChairman)
 class InfoChairmanAdmin(admin.ModelAdmin):
     """Контакты председателя"""
@@ -45,7 +46,7 @@ class InfoChairmanAdmin(admin.ModelAdmin):
 @admin.register(FeedbackJob)
 class FeedbackJobAdmin(admin.ModelAdmin):
     """Заявки"""
-    list_display = '__str__', 'phone', 'status', 'datetime_start', 'datetime_end',
+    list_display = '__str__', 'short_message', 'datetime_start', 'status', 'datetime_end',
     fields = 'status', 'datetime_end', 'message_comment', 'last_name', 'first_name', 'middle_name', 'apartment', 'entrance', 'phone', 'message', 'datetime_start',
     readonly_fields = 'last_name', 'first_name', 'middle_name', 'apartment', 'entrance', 'phone', 'message', 'datetime_start', 'datetime_end',
     list_editable = 'status',
@@ -54,7 +55,12 @@ class FeedbackJobAdmin(admin.ModelAdmin):
     search_help_text = 'Поиск по ФИО и телефону'
     date_hierarchy = 'datetime_start'
     inlines = PhotoInline,
-    list_per_page = 20
+    list_per_page = 10
+
+    def short_message(self, obj):
+        return (obj.message[:200] + '...') if len(obj.message) > 200 else obj.message
+
+    short_message.short_description = 'Краткое сообщение'
 
 # @admin.register(Photo)
 # class PhotoAdmin(admin.ModelAdmin):
