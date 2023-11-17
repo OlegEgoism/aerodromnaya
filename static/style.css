@@ -26,24 +26,27 @@ header h1 {
 nav ul {
     list-style: none;
     padding: 0;
+    text-align: center; /* Добавлено для центрирования */
 }
 
 nav ul li {
     display: inline;
-    margin-right: 20px;
+    margin-right: 10px;
+    border-radius: 10px;
 }
 
 nav ul li a {
     color: #fff;
     text-decoration: none;
     padding: 8px 16px;
-    border-radius: 5px; /* Закругление углов */
+    border-radius: 5px;
     background-color: #007bff;
-    transition: background-color 0.3s ease; /* Плавный переход при наведении */
+    transition: background-color 0.3s ease;
+    display: inline-block; /* Добавлено */
 }
 
 nav ul li a:hover {
-    background-color: indianred;
+    background-color: darkcyan;
 }
 
 .chairman-info {
@@ -60,6 +63,7 @@ nav ul li a:hover {
 
 .contact-info {
     margin-top: 20px;
+    text-align: center; /* Добавлено для центрирования */
 }
 
 .contact-info h4 {
@@ -68,8 +72,8 @@ nav ul li a:hover {
     margin: 5px 0;
 }
 
-h1 {
-    color: #333;
+h1, h2, h3 {
+    color: black;
     text-align: center;
 }
 
@@ -80,6 +84,8 @@ button {
     padding: 10px 20px;
     margin: 5px;
     cursor: pointer;
+    display: block; /* Добавлено */
+    margin: 0 auto; /* Добавлено для центрирования */
 }
 
 button:hover {
@@ -96,18 +102,18 @@ img {
 ul {
     list-style-type: none;
     padding: 0;
-    margin-bottom: 20px; /* Добавляем отступ снизу между списками */
-    border-bottom: 2px solid #ccc; /* Линия для разделения списков */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ccc;
 }
 
 ul:last-child {
-    border-bottom: none; /* Убираем линию после последнего списка */
+    border-bottom: none;
 }
 
 li {
-    border: 1px solid #ccc; /* Устанавливаем рамку */
-    padding: 15px; /* Отступ внутри рамки */
-    margin-bottom: 10px; /* Отступ между элементами списка */
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 10px;
 }
 
 a {
@@ -122,14 +128,6 @@ a:hover {
 h3, p strong {
     font-weight: bold;
     color: #333;
-}
-
-form button[type="submit"] {
-    background-color: #dc3545;
-}
-
-form button[type="submit"]:hover {
-    background-color: #c82333;
 }
 
 .circular-container {
@@ -154,30 +152,18 @@ form button[type="submit"]:hover {
 .form-group input[type="text"],
 .form-group input[type="email"],
 .form-group input[type="number"],
-.form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.form-group textarea {
-    min-height: 100px;
-}
-
-.form-group select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
+.form-group textarea,
+.form-group select,
 .form-group input[type="file"] {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #fff;
+    box-sizing: border-box; /* Добавлено для корректного отображения ширины */
+}
+
+.form-group textarea {
+    min-height: 100px;
 }
 
 .form-group button[type="submit"] {
@@ -188,6 +174,8 @@ form button[type="submit"]:hover {
     margin: 5px 0;
     cursor: pointer;
     border-radius: 4px;
+    display: block; /* Добавлено */
+    margin: 0 auto; /* Добавлено для центрирования */
 }
 
 .form-group button[type="submit"]:hover {

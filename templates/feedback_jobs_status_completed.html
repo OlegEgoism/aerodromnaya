@@ -4,7 +4,7 @@
 
 {% block content %}
     <div class="circular-container">
-        <h1>Заявки выполненные ({{ total_completed }} шт.)</h1>
+        <h3>Заявки выполненные ({{ total_completed }} шт.)</h3>
         <ul>
             {% for feedback_job in status_completed %}
                 <li>
@@ -29,18 +29,15 @@
                 </li>
             {% endfor %}
         </ul>
-
         <div class="pagination">
         <span class="step-links">
             {% if status_completed.has_previous %}
                 <a href="?page=1">&laquo; первая</a>
                 <a href="?page={{ status_completed.previous_page_number }}">предыдущая</a>
             {% endif %}
-
             <span class="current">
                 Страница {{ status_completed.number }} из {{ status_completed.paginator.num_pages }}.
             </span>
-
             {% if status_completed.has_next %}
                 <a href="?page={{ status_completed.next_page_number }}">следующая</a>
                 <a href="?page={{ status_completed.paginator.num_pages }}">последняя &raquo;</a>

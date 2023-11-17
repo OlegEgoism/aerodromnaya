@@ -3,11 +3,11 @@
 {% block title %}Заявка отправлена{% endblock %}
 
 {% block content %}
-    <h1>Заявка отправлена в товарищество! <br>
-        Следите за статусами заявок -
-        (
-        <a href="{% url 'feedback_jobs_status_in_work' %}">Заявки в работе</a>,
-        <a href="{% url 'feedback_jobs_status_completed' %}">Заявки выполненные</a>
-        )
-    </h1>
+    <div class="circular-container">
+        <h3>Заявка отправлена в товарищество собственников! <br>
+            Следите за статусами заявок <br>
+            <a style="color: red" href="{% url 'feedback_jobs_status_in_work' %}">заявки в работе</a> <br>
+            <a style="color: red" href="{% url 'feedback_jobs_status_completed' %}">заявки выполненные</a>
+        </h3>
+    </div>
 {% endblock %}

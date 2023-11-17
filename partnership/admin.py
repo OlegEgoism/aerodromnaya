@@ -34,8 +34,8 @@ class PhotoInline(admin.TabularInline):
 @admin.register(InfoChairman)
 class InfoChairmanAdmin(admin.ModelAdmin):
     """Контакты председателя"""
-    list_display = '__str__', 'phone', 'time_start', 'time_end',
-    list_editable = 'time_start', 'time_end',
+    list_display = '__str__', 'phone', 'time_start', 'time_end', 'feedback_limit',
+    list_editable = 'time_start', 'time_end', 'feedback_limit',
 
     def has_add_permission(self, request):  # позволяет создать только одну модель
         if self.model.objects.count() >= 1:
@@ -46,7 +46,7 @@ class InfoChairmanAdmin(admin.ModelAdmin):
 @admin.register(FeedbackJob)
 class FeedbackJobAdmin(admin.ModelAdmin):
     """Заявки"""
-    list_display = '__str__', 'short_message', 'datetime_start', 'status', 'datetime_end',
+    list_display = 'fio_phone', 'short_message', 'photo_count', 'datetime_start', 'status', 'datetime_end',
     fields = 'status', 'datetime_end', 'message_comment', 'last_name', 'first_name', 'middle_name', 'apartment', 'entrance', 'phone', 'message', 'datetime_start',
     readonly_fields = 'last_name', 'first_name', 'middle_name', 'apartment', 'entrance', 'phone', 'message', 'datetime_start', 'datetime_end',
     list_editable = 'status',
@@ -61,16 +61,3 @@ class FeedbackJobAdmin(admin.ModelAdmin):
         return (obj.message[:200] + '...') if len(obj.message) > 200 else obj.message
 
     short_message.short_description = 'Краткое сообщение'
-
-# @admin.register(Photo)
-# class PhotoAdmin(admin.ModelAdmin):
-#     """Фотография"""
-#     list_display = 'feedback_job', 'photo', 'preview'
-#
-#     def preview(self, obj):
-#         if obj.photo:
-#             return mark_safe(f'<img src="{obj.photo.url}" width="60" height="60" />')
-#         else:
-#             return 'Нет фотографии'
-#
-#     preview.short_description = 'Фотография'

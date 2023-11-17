@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Создать заявку{% endblock %}
+
+{% block content %}
+    <div class="circular-container">
+        <h3 style="color: red">Вы пытаетесь отправить больше {{ info_chairman.feedback_limit }} заявок в течение дня. Попробуйте отправить заявку через 24 часа.</h3>
+    </div>
+{% endblock %}

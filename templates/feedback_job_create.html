@@ -4,16 +4,18 @@
 
 {% block content %}
     <div class="circular-container">
-        <h1>Создать заявку</h1>
+        <h3>Создать заявку</h3>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="form-group">
-                {{ feedback_job_create_form.as_p }}
+                {% for field in feedback_job_create_form.visible_fields %}
+                    {{ field }}
+                {% endfor %}
             </div>
             {{ photo_formset.management_form }}
             <div class="form-group">
                 {% for form in photo_formset %}
-                    {{ form.as_p }}
+                    {{ form }}
                 {% endfor %}
             </div>
             <button type="submit">Отправить</button>

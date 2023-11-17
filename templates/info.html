@@ -3,9 +3,12 @@
 {% block title %}Главная{% endblock %}
 
 {% block content %}
-<section class="chairman-info">
-    <p>Председатель: {{ info_chairman.fio }}</p>
-    <p>Телефон: {{ info_chairman.phone }}</p>
-    <p>Время работы: {{ info_chairman.time_start }} - {{ info_chairman.time_end }}</p>
-</section>
+    <div class="circular-container">
+        <section class="chairman-info">
+            <p>Председатель: {{ info_chairman.fio }}</p>
+            <p>Телефон: {{ info_chairman.phone }}</p>
+            <p>Время работы: {{ info_chairman.time_start }} - {{ info_chairman.time_end }}</p>
+        </section>
+        {{ info_chairman.map|safe }}
+    </div>
 {% endblock %}

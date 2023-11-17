@@ -19,6 +19,8 @@ class InfoChairman(models.Model):
     phone = models.CharField(verbose_name='Мобильный телефон', max_length=20, validators=[phone_validator])
     time_start = models.CharField(verbose_name='Время начала работы', max_length=7)
     time_end = models.CharField(verbose_name='Время окончания работы', max_length=7)
+    feedback_limit = models.IntegerField(verbose_name='Число заявок в день', default=2)
+    map = models.TextField(verbose_name='ссылка на яндекс карту', help_text='Вставить ссылку с: https://yandex.ru/map-constructor (выбирать width="600%" height="400")')
 
     class Meta:
         verbose_name = 'Контакты'
@@ -40,10 +42,10 @@ class FeedbackJob(models.Model):
     middle_name = models.CharField(verbose_name='Отчество', max_length=100)
     apartment = models.IntegerField(verbose_name='Квартира', validators=[MinValueValidator(1), MaxValueValidator(650)])
     entrance = models.IntegerField(verbose_name='Подъезд', validators=[MinValueValidator(1), MaxValueValidator(9)])
-    phone = models.CharField(verbose_name='Телефон', max_length=20, validators=[phone_validator], help_text='телефон в формате +37525....... +37529....... +37533....... +37544.......')
+    phone = models.CharField(verbose_name='Телефон', max_length=20, validators=[phone_validator])
     message = models.TextField(verbose_name='Сообщение')
     status = models.CharField(verbose_name='Статус', max_length=10, choices=STATUS_CHOICES, default='-')
-    datetime_start = models.DateTimeField(verbose_name='Дата заявки', auto_now=True)
+    datetime_start = models.DateTimeField(verbose_name='Дата заявки', auto_now_add=True)
     datetime_end = models.DateField(verbose_name='Дата закрытия заявки', null=True, blank=True)
     message_comment = models.TextField(verbose_name='Ответ от председателя', null=True, blank=True)
 
@@ -52,8 +54,10 @@ class FeedbackJob(models.Model):
         verbose_name_plural = 'Заявки'
         ordering = '-datetime_start',
 
-    def __str__(self):
-        return f'{self.last_name} {self.first_name} {self.middle_name} {self.phone}'
+    def fio_phone(self):
+        return f'{self.last_name} {self.first_name} {self.middle_name} ({self.phone})'
+
+    fio_phone.short_description = 'ФИО (телефон)'
 
     def save(self, *args, **kwargs):
         if self.status == 'Выполнен' and not self.datetime_end:
@@ -61,6 +65,12 @@ class FeedbackJob(models.Model):
         elif self.status != 'Выполнен':
             self.datetime_end = None  # Сбрасываем дату, если статус не "Выполнен"
         super().save(*args, **kwargs)
+
+    def photo_count(self):
+        return f'{self.feedback_job_photo.count()} шт.'
+
+    photo_count.short_description = 'Фотографии'
+
 
 class Photo(models.Model):
     """Фотография"""
