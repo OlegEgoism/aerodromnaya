@@ -1,6 +1,7 @@
+import requests
 from django.shortcuts import render, redirect
 from partnership.forms import FeedbackJobForm, PhotoFormSet
-from partnership.models import InfoChairman, FeedbackJob
+from partnership.models import InfoChairman, FeedbackJob, UserInfo
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -17,6 +18,21 @@ def info(request):
     return render(request, 'info.html', {'info_chairman': info_chairman, 'total_in_work': total_in_work, 'total_completed': total_completed, })
 
 
+def get_country_from_ip(request):
+    user_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+    access_key = '7bfbed9c04c29d355a7d1e2801367852'  # https://ipstack.com/
+    api_url = f"http://api.ipstack.com/{user_ip}?access_key={access_key}"
+    # api_url = f"http://api.ipstack.com/93.171.160.135?access_key={access_key}"
+    response = requests.get(api_url)
+    if response.status_code == 200:
+        data = response.json()
+        country_name = data.get('country_name')
+        print(country_name, 'country_name')
+        return country_name
+    else:
+        return None
+
+
 def feedback_job_create(request):
     """Создать заявку"""
     info_chairman = InfoChairman.objects.get()
@@ -25,6 +41,7 @@ def feedback_job_create(request):
     total_in_work = in_work.count()
     status_completed = FeedbackJob.objects.filter(status='Выполнен')
     total_completed = status_completed.count()
+    """Количество запросов"""
     feedback_count_key = 'feedback_count'
     feedback_count = request.session.get(feedback_count_key, 0)
     if request.method == 'POST':
@@ -35,6 +52,29 @@ def feedback_job_create(request):
                 feedback_job = feedback_job_create_form.save()
                 photo_formset.instance = feedback_job
                 photo_formset.save()
+                """Получение информации о стране по IP"""
+                country = get_country_from_ip(request)
+                """Информация о жильцах"""
+                ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+                user_agent = request.META.get("HTTP_USER_AGENT")
+                last_name = feedback_job.last_name
+                first_name = feedback_job.first_name
+                middle_name = feedback_job.middle_name
+                phone = feedback_job.phone
+                apartment = feedback_job.apartment
+                entrance = feedback_job.entrance
+                user_info, created = UserInfo.objects.get_or_create(
+                    ip=ip,
+                    defaults={
+                        'fio': f'{last_name} {first_name} {middle_name}',
+                        'phone': phone,
+                        'apartment': apartment,
+                        'entrance': entrance,
+                        'user_agent': user_agent,
+                        'country': country
+                    }
+                )
+
                 request.session[feedback_count_key] = feedback_count + 1
             else:
                 return redirect('feedback_send_limit')

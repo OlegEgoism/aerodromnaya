@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from rangefilter.filters import DateRangeFilterBuilder
 
-from partnership.models import InfoChairman, FeedbackJob, Photo
+from partnership.models import InfoChairman, FeedbackJob, Photo, UserInfo
 
 """Убираем отображение в админке"""
 admin.site.unregister(Group)
@@ -33,7 +33,7 @@ class PhotoInline(admin.TabularInline):
 
 @admin.register(InfoChairman)
 class InfoChairmanAdmin(admin.ModelAdmin):
-    """Контакты председателя"""
+    """Контакты и настройки"""
     list_display = '__str__', 'phone', 'time_start', 'time_end', 'feedback_limit',
     list_editable = 'time_start', 'time_end', 'feedback_limit',
 
@@ -61,3 +61,13 @@ class FeedbackJobAdmin(admin.ModelAdmin):
         return (obj.message[:200] + '...') if len(obj.message) > 200 else obj.message
 
     short_message.short_description = 'Краткое сообщение'
+
+
+@admin.register(UserInfo)
+class UserInfoAdmin(admin.ModelAdmin):
+    """Информация о жильцах"""
+    list_display = 'fio_phone', 'phone', 'ip', 'user_agent', 'datetime_add',
+    list_filter = ('datetime_add', DateRangeFilterBuilder()),
+    search_fields = 'fio', 'phone',
+    search_help_text = 'Поиск по ФИО и телефону'
+    date_hierarchy = 'datetime_add'

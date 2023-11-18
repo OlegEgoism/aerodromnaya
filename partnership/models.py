@@ -14,7 +14,7 @@ def phone_validator(phone_number):
 
 
 class InfoChairman(models.Model):
-    """Контакты председателя"""
+    """Контакты и настройки"""
     fio = models.CharField(verbose_name='ФИО', max_length=200)
     phone = models.CharField(verbose_name='Мобильный телефон', max_length=20, validators=[phone_validator])
     time_start = models.CharField(verbose_name='Время начала работы', max_length=7)
@@ -23,8 +23,8 @@ class InfoChairman(models.Model):
     map = models.TextField(verbose_name='ссылка на яндекс карту', help_text='Вставить ссылку с: https://yandex.ru/map-constructor (выбирать width="600%" height="400")')
 
     class Meta:
-        verbose_name = 'Контакты'
-        verbose_name_plural = 'Контакты'
+        verbose_name = 'Контакты и настройки'
+        verbose_name_plural = 'Контакты и настройки'
 
     def __str__(self):
         return self.fio
@@ -40,7 +40,7 @@ class FeedbackJob(models.Model):
     last_name = models.CharField(verbose_name='Фамилия', max_length=100)
     first_name = models.CharField(verbose_name='Имя', max_length=100)
     middle_name = models.CharField(verbose_name='Отчество', max_length=100)
-    apartment = models.IntegerField(verbose_name='Квартира', validators=[MinValueValidator(1), MaxValueValidator(650)])
+    apartment = models.IntegerField(verbose_name='Квартира', validators=[MinValueValidator(1), MaxValueValidator(550)])
     entrance = models.IntegerField(verbose_name='Подъезд', validators=[MinValueValidator(1), MaxValueValidator(9)])
     phone = models.CharField(verbose_name='Телефон', max_length=20, validators=[phone_validator])
     message = models.TextField(verbose_name='Сообщение')
@@ -58,6 +58,9 @@ class FeedbackJob(models.Model):
         return f'{self.last_name} {self.first_name} {self.middle_name} ({self.phone})'
 
     fio_phone.short_description = 'ФИО (телефон)'
+
+    def __str__(self):
+        return f'{self.last_name} {self.first_name} {self.middle_name}'
 
     def save(self, *args, **kwargs):
         if self.status == 'Выполнен' and not self.datetime_end:
@@ -83,3 +86,26 @@ class Photo(models.Model):
 
     def __str__(self):
         return f'{self.id} - {self.feedback_job.id}'
+
+
+class UserInfo(models.Model):
+    """Информация о жильцах"""
+    fio = models.CharField(verbose_name='Фамилия', max_length=100, null=True, blank=True)
+    phone = models.CharField(verbose_name='Телефон', max_length=20, null=True, blank=True)
+    apartment = models.CharField(verbose_name='Квартира', max_length=3, null=True, blank=True)
+    entrance = models.CharField(verbose_name='Подъезд', max_length=1, null=True, blank=True)
+    ip = models.CharField(verbose_name='ip', max_length=200, null=True, blank=True)
+    user_agent = models.TextField(verbose_name='Пользовательский агент', null=True, blank=True)
+    datetime_add = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
+    country = models.TextField(verbose_name='Пользовательский агент', null=True, blank=True)
+    class Meta:
+        verbose_name = 'Информация о жильцах'
+        verbose_name_plural = 'Информация о жильцах'
+
+    def __str__(self):
+        return self.fio
+
+    def fio_phone(self):
+        return f'{self.fio} ({self.phone})'
+
+    fio_phone.short_description = 'ФИО (телефон)'
