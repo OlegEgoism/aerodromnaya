@@ -22,7 +22,6 @@ def get_country_from_ip(request):
     user_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
     access_key = '7bfbed9c04c29d355a7d1e2801367852'  # https://ipstack.com/
     api_url = f"http://api.ipstack.com/{user_ip}?access_key={access_key}"
-    # api_url = f"http://api.ipstack.com/93.171.160.135?access_key={access_key}"
     response = requests.get(api_url)
     if response.status_code == 200:
         data = response.json()
@@ -48,30 +47,49 @@ def feedback_job_create(request):
         photo_formset = PhotoFormSet(request.POST, request.FILES, instance=FeedbackJob())
         if feedback_job_create_form.is_valid() and photo_formset.is_valid():
             if feedback_count < feedback_limit:
-                feedback_job = feedback_job_create_form.save()
-                photo_formset.instance = feedback_job
-                photo_formset.save()
+                feedback_job_data = feedback_job_create_form.cleaned_data
+                """Проверка наличия записи с аналогичными данными"""
+                existing_feedback_job = FeedbackJob.objects.filter(
+                    last_name=feedback_job_data['last_name'],
+                    first_name=feedback_job_data['first_name'],
+                    middle_name=feedback_job_data['middle_name'],
+                    phone=feedback_job_data['phone'],
+                    apartment=feedback_job_data['apartment'],
+                    entrance=feedback_job_data['entrance'],
+                    message=feedback_job_data['message'],
+                ).first()
+                if existing_feedback_job:
+                    for key, value in feedback_job_data.items():
+                        setattr(existing_feedback_job, key, value)
+                    existing_feedback_job.save()
+                    feedback_job = existing_feedback_job
+                else:
+                    feedback_job = feedback_job_create_form.save()
+                    photo_formset.instance = feedback_job
+                    photo_formset.save()
                 """Получение информации о стране по IP"""
                 country = get_country_from_ip(request)
                 """Информация о жильцах"""
-                ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
-                user_agent = request.META.get("HTTP_USER_AGENT")
                 last_name = feedback_job.last_name
                 first_name = feedback_job.first_name
                 middle_name = feedback_job.middle_name
                 phone = feedback_job.phone
                 apartment = feedback_job.apartment
                 entrance = feedback_job.entrance
-                user_info, created = UserInfo.objects.get_or_create()
-                user_info.fio = f'{last_name} {first_name} {middle_name}'
-                user_info.phone = phone
-                user_info.apartment = apartment
-                user_info.entrance = entrance
-                user_info.ip = ip
-                user_info.user_agent = user_agent
-                user_info.country = country
-                user_info.save()
-
+                ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
+                user_agent = request.META.get("HTTP_USER_AGENT")
+                """Обновление или создании UserInfo"""
+                UserInfo.objects.update_or_create(
+                    fio=f'{last_name} {first_name} {middle_name}',
+                    phone=phone,
+                    defaults={
+                        'apartment': apartment,
+                        'entrance': entrance,
+                        'ip': ip,
+                        'user_agent': user_agent,
+                        'country': country
+                    }
+                )
                 request.session[feedback_count_key] = feedback_count + 1
             else:
                 return redirect('feedback_send_limit')
@@ -144,5 +162,4 @@ def feedback_jobs_status_completed(request):
         status_completed = paginator.page(1)
     except EmptyPage:
         status_completed = paginator.page(paginator.num_pages)
-
     return render(request, 'feedback_jobs_status_completed.html', {'info_chairman': info_chairman, 'status_completed': status_completed, 'total_in_work': total_in_work, 'total_completed': total_completed, })

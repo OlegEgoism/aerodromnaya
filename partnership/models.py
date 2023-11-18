@@ -21,6 +21,7 @@ class InfoChairman(models.Model):
     time_end = models.CharField(verbose_name='Время окончания работы', max_length=7)
     feedback_limit = models.IntegerField(verbose_name='Число заявок в день', default=2)
     map = models.TextField(verbose_name='ссылка на яндекс карту', help_text='Вставить ссылку с: https://yandex.ru/map-constructor (выбирать width="600%" height="400")')
+    address = models.TextField(verbose_name='Адрес')
 
     class Meta:
         verbose_name = 'Контакты и настройки'
@@ -97,7 +98,7 @@ class UserInfo(models.Model):
     ip = models.CharField(verbose_name='ip', max_length=200, null=True, blank=True)
     user_agent = models.TextField(verbose_name='Пользовательский агент', null=True, blank=True)
     datetime_add = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
-    country = models.TextField(verbose_name='Пользовательский агент', null=True, blank=True)
+    country = models.TextField(verbose_name='Страна', null=True, blank=True)
     class Meta:
         verbose_name = 'Информация о жильцах'
         verbose_name_plural = 'Информация о жильцах'
