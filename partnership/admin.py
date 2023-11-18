@@ -66,9 +66,9 @@ class FeedbackJobAdmin(admin.ModelAdmin):
 @admin.register(UserInfo)
 class UserInfoAdmin(admin.ModelAdmin):
     """Информация о жильцах"""
-    list_display = 'fio_phone', 'apartment', 'entrance', 'ip', 'user_agent', 'datetime_add',
+    list_display = 'fio_phone', 'apartment', 'entrance', 'ip', 'user_agent', 'datetime_add', 'country'
     readonly_fields = 'fio', 'phone', 'apartment', 'entrance', 'ip', 'user_agent', 'datetime_add', 'country',
-    list_filter = ('datetime_add', DateRangeFilterBuilder()), 'entrance',
+    list_filter = ('datetime_add', DateRangeFilterBuilder()), 'entrance', 'country'
     search_fields = 'fio', 'phone', 'apartment',
     search_help_text = 'Поиск по ФИО, телефону и квартире'
     date_hierarchy = 'datetime_add'
