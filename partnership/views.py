@@ -27,7 +27,6 @@ def get_country_from_ip(request):
     if response.status_code == 200:
         data = response.json()
         country_name = data.get('country_name')
-        print(country_name, 'country_name')
         return country_name
     else:
         return None
@@ -63,17 +62,15 @@ def feedback_job_create(request):
                 phone = feedback_job.phone
                 apartment = feedback_job.apartment
                 entrance = feedback_job.entrance
-                user_info, created = UserInfo.objects.get_or_create(
-                    ip=ip,
-                    defaults={
-                        'fio': f'{last_name} {first_name} {middle_name}',
-                        'phone': phone,
-                        'apartment': apartment,
-                        'entrance': entrance,
-                        'user_agent': user_agent,
-                        'country': country
-                    }
-                )
+                user_info, created = UserInfo.objects.get_or_create()
+                user_info.fio = f'{last_name} {first_name} {middle_name}'
+                user_info.phone = phone
+                user_info.apartment = apartment
+                user_info.entrance = entrance
+                user_info.ip = ip
+                user_info.user_agent = user_agent
+                user_info.country = country
+                user_info.save()
 
                 request.session[feedback_count_key] = feedback_count + 1
             else:
