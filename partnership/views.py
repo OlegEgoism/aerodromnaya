@@ -26,7 +26,13 @@ def get_country_from_ip(request):
     if response.status_code == 200:
         data = response.json()
         country_name = data.get('country_name')
-        return country_name
+        region_name = data.get('region_name')
+        city = data.get('city')
+        zip = data.get('zip')
+        type = data.get('type')
+        latitude = data.get('latitude')
+        longitude = data.get('longitude')
+        return f' страна: {country_name}, район: {region_name}, город: {city}, ZIP код: {zip}, тип: {type} широта: {latitude} долгота: {longitude}'
     else:
         return None
 
@@ -68,7 +74,7 @@ def feedback_job_create(request):
                     photo_formset.instance = feedback_job
                     photo_formset.save()
                 """Получение информации о стране по IP"""
-                country = get_country_from_ip(request)
+                country_info = get_country_from_ip(request)
                 """Информация о жильцах"""
                 last_name = feedback_job.last_name
                 first_name = feedback_job.first_name
@@ -87,7 +93,7 @@ def feedback_job_create(request):
                         'entrance': entrance,
                         'ip': ip,
                         'user_agent': user_agent,
-                        'country': country
+                        'country_info': country_info,
                     }
                 )
                 request.session[feedback_count_key] = feedback_count + 1

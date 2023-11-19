@@ -98,7 +98,8 @@ class UserInfo(models.Model):
     ip = models.CharField(verbose_name='ip', max_length=200, null=True, blank=True)
     user_agent = models.TextField(verbose_name='Пользовательский агент', null=True, blank=True)
     datetime_add = models.DateTimeField(verbose_name='Дата создания', auto_now_add=True)
-    country = models.TextField(verbose_name='Страна', null=True, blank=True)
+    country_info = models.TextField(verbose_name='Дополнительная информация', null=True, blank=True)
+
     class Meta:
         verbose_name = 'Информация о жильцах'
         verbose_name_plural = 'Информация о жильцах'
