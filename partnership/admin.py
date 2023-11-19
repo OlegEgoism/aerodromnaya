@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 from rangefilter.filters import DateRangeFilterBuilder
 
-from partnership.models import InfoChairman, FeedbackJob, Photo, UserInfo
+from partnership.models import InfoChairman, FeedbackJob, Photo, UserInfo, PageViewCounter
 
 """Убираем отображение в админке"""
 admin.site.unregister(Group)
@@ -73,3 +73,10 @@ class UserInfoAdmin(admin.ModelAdmin):
     search_help_text = 'Поиск по ФИО, телефону и квартире'
     date_hierarchy = 'datetime_add'
     list_per_page = 10
+
+
+@admin.register(PageViewCounter)
+class PageViewCounterAdmin(admin.ModelAdmin):
+    """Просмотры на странице"""
+    list_display = 'page_name', 'view_count'
+    readonly_fields = 'page_name', 'view_count'

@@ -1,12 +1,12 @@
 import requests
 from django.shortcuts import render, redirect
 from partnership.forms import FeedbackJobForm, PhotoFormSet
-from partnership.models import InfoChairman, FeedbackJob, UserInfo
+from partnership.models import InfoChairman, FeedbackJob, UserInfo, PageViewCounter
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def info(request):
-    """Главная старница"""
+    """Главная страница"""
     try:
         info_chairman = InfoChairman.objects.get()
     except InfoChairman.DoesNotExist:
@@ -15,7 +15,13 @@ def info(request):
     total_in_work = in_work.count()
     status_completed = FeedbackJob.objects.filter(status='Выполнен')
     total_completed = status_completed.count()
-    return render(request, 'info.html', {'info_chairman': info_chairman, 'total_in_work': total_in_work, 'total_completed': total_completed, })
+
+    page_name = 'Главная страница'
+    page_counter, created = PageViewCounter.objects.get_or_create(page_name=page_name)
+    page_counter.view_count += 1
+    page_counter.save()
+
+    return render(request, 'info.html', {'info_chairman': info_chairman, 'total_in_work': total_in_work, 'total_completed': total_completed, 'view_count': page_counter.view_count})
 
 
 def get_country_from_ip(request):
@@ -32,7 +38,7 @@ def get_country_from_ip(request):
         type = data.get('type')
         latitude = data.get('latitude')
         longitude = data.get('longitude')
-        return f' страна: {country_name}, район: {region_name}, город: {city}, ZIP код: {zip}, тип: {type} широта: {latitude} долгота: {longitude}'
+        return f'страна: {country_name}, район: {region_name}, город: {city}, ZIP код: {zip}, тип: {type} широта: {latitude} долгота: {longitude}'
     else:
         return None
 
@@ -73,6 +79,12 @@ def feedback_job_create(request):
                     feedback_job = feedback_job_create_form.save()
                     photo_formset.instance = feedback_job
                     photo_formset.save()
+
+                page_name = 'Создать заявку'
+                page_counter, created = PageViewCounter.objects.get_or_create(page_name=page_name)
+                page_counter.view_count += 1
+                page_counter.save()
+
                 """Получение информации о стране по IP"""
                 country_info = get_country_from_ip(request)
                 """Информация о жильцах"""
@@ -143,13 +155,19 @@ def feedback_jobs_status_in_work(request):
     items_per_page = 5
     paginator = Paginator(in_work, items_per_page)
     page = request.GET.get('page')
+
+    page_name = 'Заявки в работе'
+    page_counter, created = PageViewCounter.objects.get_or_create(page_name=page_name)
+    page_counter.view_count += 1
+    page_counter.save()
+
     try:
         in_work = paginator.page(page)
     except PageNotAnInteger:
         in_work = paginator.page(1)
     except EmptyPage:
         in_work = paginator.page(paginator.num_pages)
-    return render(request, 'feedback_jobs_status_in_work.html', {'info_chairman': info_chairman, 'in_work': in_work, 'total_in_work': total_in_work, 'total_completed': total_completed, })
+    return render(request, 'feedback_jobs_status_in_work.html', {'info_chairman': info_chairman, 'in_work': in_work, 'total_in_work': total_in_work, 'total_completed': total_completed, 'view_count': page_counter.view_count})
 
 
 def feedback_jobs_status_completed(request):
@@ -162,10 +180,16 @@ def feedback_jobs_status_completed(request):
     items_per_page = 5
     paginator = Paginator(status_completed, items_per_page)
     page = request.GET.get('page')
+
+    page_name = 'Заявки выполненные'
+    page_counter, created = PageViewCounter.objects.get_or_create(page_name=page_name)
+    page_counter.view_count += 1
+    page_counter.save()
+
     try:
         status_completed = paginator.page(page)
     except PageNotAnInteger:
         status_completed = paginator.page(1)
     except EmptyPage:
         status_completed = paginator.page(paginator.num_pages)
-    return render(request, 'feedback_jobs_status_completed.html', {'info_chairman': info_chairman, 'status_completed': status_completed, 'total_in_work': total_in_work, 'total_completed': total_completed, })
+    return render(request, 'feedback_jobs_status_completed.html', {'info_chairman': info_chairman, 'status_completed': status_completed, 'total_in_work': total_in_work, 'total_completed': total_completed, 'view_count': page_counter.view_count})

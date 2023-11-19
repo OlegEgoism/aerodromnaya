@@ -111,3 +111,16 @@ class UserInfo(models.Model):
         return f'{self.fio} ({self.phone})'
 
     fio_phone.short_description = 'ФИО (телефон)'
+
+
+class PageViewCounter(models.Model):
+    """Просмотры на странице"""
+    page_name = models.CharField(verbose_name='Название страницы', max_length=100)
+    view_count = models.PositiveIntegerField(verbose_name='Просмотров', default=0)
+
+    class Meta:
+        verbose_name = 'Просмотры на странице'
+        verbose_name_plural = 'Просмотры на странице'
+
+    def __str__(self):
+        return self.page_name
