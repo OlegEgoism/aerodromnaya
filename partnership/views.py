@@ -5,6 +5,7 @@ from partnership.models import InfoChairman, FeedbackJob, UserInfo, PageViewCoun
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Count
 
+
 def info(request):
     """Главная страница"""
     try:
@@ -193,7 +194,6 @@ def feedback_jobs_status_completed(request):
     except EmptyPage:
         status_completed = paginator.page(paginator.num_pages)
     return render(request, 'feedback_jobs_status_completed.html', {'info_chairman': info_chairman, 'status_completed': status_completed, 'total_in_work': total_in_work, 'total_completed': total_completed, 'view_count': page_counter.view_count})
-
 
 
 def apartment_counts_view(request):
