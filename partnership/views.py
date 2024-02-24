@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from partnership.forms import FeedbackJobForm, PhotoFormSet
 from partnership.models import InfoChairman, FeedbackJob, UserInfo, PageViewCounter
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-
+from django.db.models import Count
 
 def info(request):
     """Главная страница"""
@@ -26,21 +26,21 @@ def info(request):
 
 def get_country_from_ip(request):
     user_ip = request.META.get('HTTP_X_FORWARDED_FOR') or request.META.get('REMOTE_ADDR')
-    access_key = '7bfbed9c04c29d355a7d1e2801367852'  # https://ipstack.com/
-    api_url = f"http://api.ipstack.com/{user_ip}?access_key={access_key}"
-    response = requests.get(api_url)
-    if response.status_code == 200:
-        data = response.json()
-        country_name = data.get('country_name')
-        region_name = data.get('region_name')
-        city = data.get('city')
-        zip = data.get('zip')
-        type = data.get('type')
-        latitude = data.get('latitude')
-        longitude = data.get('longitude')
-        return f'страна: {country_name}, район: {region_name}, город: {city}, ZIP код: {zip}, тип: {type} широта: {latitude} долгота: {longitude}'
-    else:
-        return None
+    # access_key = '7bfbed9c04c29d355a7d1e2801367852'  # https://ipstack.com/
+    # api_url = f"http://api.ipstack.com/{user_ip}?access_key={access_key}"
+    # response = requests.get(api_url)
+    # if response.status_code == 200:
+    #     data = response.json()
+    #     country_name = data.get('country_name')
+    #     region_name = data.get('region_name')
+    #     city = data.get('city')
+    #     zip = data.get('zip')
+    #     type = data.get('type')
+    #     latitude = data.get('latitude')
+    #     longitude = data.get('longitude')
+    #     return f'страна: {country_name}, район: {region_name}, город: {city}, ZIP код: {zip}, тип: {type} широта: {latitude} долгота: {longitude}'
+    # else:
+    #     return None
 
 
 def feedback_job_create(request):
@@ -193,3 +193,20 @@ def feedback_jobs_status_completed(request):
     except EmptyPage:
         status_completed = paginator.page(paginator.num_pages)
     return render(request, 'feedback_jobs_status_completed.html', {'info_chairman': info_chairman, 'status_completed': status_completed, 'total_in_work': total_in_work, 'total_completed': total_completed, 'view_count': page_counter.view_count})
+
+
+
+def apartment_counts_view(request):
+    """Графики отображения заявок (Статистика)"""
+    all_apartment_counts = FeedbackJob.objects.values('entrance').annotate(count=Count('entrance'))
+    data_all = {
+        'apartments_all': [item['entrance'] for item in all_apartment_counts],
+        'counts_all': [item['count'] for item in all_apartment_counts],
+    }
+
+    completed_apartment_counts = FeedbackJob.objects.filter(status='Выполнен').values('entrance').annotate(count=Count('entrance'))
+    data_completed = {
+        'apartments_completed': [item['entrance'] for item in completed_apartment_counts],
+        'counts_completed': [item['count'] for item in completed_apartment_counts],
+    }
+    return render(request, 'graf.html', {**data_all, **data_completed})

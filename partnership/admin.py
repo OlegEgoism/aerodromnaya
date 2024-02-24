@@ -14,7 +14,7 @@ class PhotoInline(admin.TabularInline):
     model = Photo
     extra = 0
     readonly_fields = 'preview', 'photo',
-    classes = ['collapse']
+    # classes = ['collapse']
 
     def preview(self, obj):
         if obj.photo:
@@ -55,7 +55,7 @@ class FeedbackJobAdmin(admin.ModelAdmin):
     search_help_text = 'Поиск по ФИО и телефону'
     date_hierarchy = 'datetime_start'
     inlines = PhotoInline,
-    list_per_page = 10
+    list_per_page = 20
 
     def short_message(self, obj):
         return (obj.message[:200] + '...') if len(obj.message) > 200 else obj.message
@@ -68,7 +68,7 @@ class UserInfoAdmin(admin.ModelAdmin):
     """Информация о жильцах"""
     list_display = 'fio_phone', 'apartment', 'entrance', 'ip', 'user_agent', 'datetime_add', 'country_info',
     readonly_fields = 'fio', 'phone', 'apartment', 'entrance', 'ip', 'user_agent', 'datetime_add', 'country_info',
-    list_filter = ('datetime_add', DateRangeFilterBuilder()), 'entrance', 'country_info',
+    list_filter = ('datetime_add', DateRangeFilterBuilder()), 'entrance',
     search_fields = 'fio', 'phone', 'apartment',
     search_help_text = 'Поиск по ФИО, телефону и квартире'
     date_hierarchy = 'datetime_add'

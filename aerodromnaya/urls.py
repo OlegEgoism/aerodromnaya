@@ -28,6 +28,8 @@ urlpatterns = [
     path('feedback_send_limit/', views.feedback_send_limit, name='feedback_send_limit'),
     path('feedback_jobs_status_in_work/', views.feedback_jobs_status_in_work, name='feedback_jobs_status_in_work'),
     path('feedback_jobs_status_completed/', views.feedback_jobs_status_completed, name='feedback_jobs_status_completed'),
+    path('apartment_counts/', views.apartment_counts_view, name='apartment_counts'),
+
 ]
 
 if settings.DEBUG:

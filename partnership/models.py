@@ -103,9 +103,11 @@ class UserInfo(models.Model):
     class Meta:
         verbose_name = 'Информация о жильцах'
         verbose_name_plural = 'Информация о жильцах'
+        indexes = models.Index(fields=['fio']),
 
-    def __str__(self):
-        return self.fio
+        def __str__(self):
+
+            return self.fio
 
     def fio_phone(self):
         return f'{self.fio} ({self.phone})'
